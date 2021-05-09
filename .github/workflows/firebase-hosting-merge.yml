@@ -18,8 +18,8 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TASK_57A34 }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TASK_CHALLENGE }}'
           channelId: live
-          projectId: task-57a34
+          projectId: task-challenge
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
