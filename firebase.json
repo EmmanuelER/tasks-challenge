@@ -1,8 +1,11 @@
 {
   "hosting": {
-    "site": "tasks-challenge",
     "public": "dist/tasks-challenge",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "rewrites": [
       {
         "source": "**",
