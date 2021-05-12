@@ -1,11 +1,11 @@
 import { Injectable, NgZone } from '@angular/core';
-import { User } from '../services/user';
 import { AngularFireAuth } from '@angular/fire/auth';
 import {
   AngularFirestore,
   AngularFirestoreDocument,
 } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
+import { User } from './user';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +26,8 @@ export class AuthService {
         this.userData = user;
         localStorage.setItem('user', JSON.stringify(this.userData));
       } else {
-        localStorage.setItem('user', '');
+        localStorage.setItem('user', 'null');
+        JSON.parse(localStorage.user);
       }
     });
   }
@@ -36,19 +37,19 @@ export class AuthService {
     await this.afAuth
       .signInWithEmailAndPassword(email, password)
       .then((result) => {
-        this.ngZone.run(() => {
-          this.router.navigate(['dashboard']);
-        });
-        this.userData(result.user);
+        this.SetUserData(result.user);
       })
       .catch((error) => {
         window.alert(error.message);
+      })
+      .then(() => {
+        this.router.navigate(['dashboard']);
       });
   }
 
   // Reset Forggot password
   async ForgotPassword(passwordResetEmail: string) {
-    return this.afAuth
+    return await this.afAuth
       .sendPasswordResetEmail(passwordResetEmail)
       .then(() => {
         window.alert('Password reset email sent, check your inbox.');
@@ -57,12 +58,32 @@ export class AuthService {
         window.alert(error);
       });
   }
+  SetUserData(user: any) {
+    console.log(this.userData);
+    const userRef: AngularFirestoreDocument<any> = this.afs.doc(
+      `users/${user.uid}`
+    );
+    const userData: User = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+      emailVerified: user.emailVerified,
+    };
+    return userRef.set(userData, {
+      merge: true,
+    });
+  }
 
   // Sign out
   async SignOut() {
-    return this.afAuth.signOut().then(() => {
+    return await this.afAuth.signOut().then(() => {
       localStorage.removeItem('user');
       this.router.navigate(['sign-in']);
     });
+  }
+  get isLoggedIn(): boolean {
+    const user = JSON.parse(localStorage?.user);
+    return user !== null ? true : false;
   }
 }

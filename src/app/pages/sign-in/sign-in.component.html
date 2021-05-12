@@ -1,1 +1,18 @@
-<p>sign-in works!</p>
+<div>
+  <form class="form-control">
+    <label for="email">Correo Electrónico</label>
+    <input type="email" name="email" #userName required />
+    <label for="pass">Contraseña</label>
+    <input type="password" name="pass" #userPassword required />
+    <div class="buttons">
+      <button
+        type="button"
+        (click)="authService.SignIn(userName.value, userPassword.value)"
+      >
+        Iniciar sesión
+      </button>
+
+      <a href="reset-password">Olvidé mi contraseña</a>
+    </div>
+  </form>
+</div>
