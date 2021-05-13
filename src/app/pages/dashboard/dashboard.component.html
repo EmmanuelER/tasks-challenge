@@ -29,7 +29,10 @@
         <tr *ngFor="let listTasks of listTasks">
           <td class="d-flex justify-content-center align-items-center">
             <div
-              *ngIf="listTasks.status != 'ainprogress'"
+              *ngIf="
+                listTasks.status != 'ainprogress' &&
+                listTasks.status != 'finalized'
+              "
               class="text-success mx-2"
               role="button"
               (click)="playTask(listTasks)"
@@ -108,7 +111,7 @@
               Finalizada
             </div>
           </td>
-          <td>{{ listTasks.duration }} mins.</td>
+          <td>{{ listTasks.timeRemaining }} mins.</td>
           <td>
             <div class="d-flex">
               <div
@@ -366,3 +369,20 @@
     </button>
   </div>
 </ng-template>
+<script>
+  window.onbeforeunload = function () {
+    return test();
+  };
+
+  function test() {
+    if (
+      confirm(
+        "would you like to run the last function before closing the window?"
+      )
+    ) {
+      imts_save_changes();
+
+      alert("record saved");
+    }
+  }
+</script>

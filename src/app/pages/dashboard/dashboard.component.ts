@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { getMinutes } from 'date-fns';
+import { differenceInMilliseconds } from 'date-fns';
+import { HostListener } from '@angular/core';
+import { element } from 'protractor';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -23,14 +25,24 @@ export class DashboardComponent implements OnInit {
     public af: AngularFirestore,
     public authService: AuthService
   ) {}
-
-  ngOnInit(): void {
+  public taskInProgress: any = [];
+  ngOnInit() {
     this.getTasks();
   }
+  @HostListener('window:unload', ['$event'])
+  unload(event: any) {
+    this.taskInProgress = this.listTasks.filter(
+      (word: any) => word.status == 'ainprogress'
+    );
+    this.taskInProgress.forEach((element: any) => {
+      this.saveStatus(element);
+    });
+    return false;
+  }
 
-  async getTasks() {
-    let listT: any = [];
-    await this.af
+  getTasks() {
+    var listT: any = [];
+    this.af
       .collection('tasks', (ref) => ref.orderBy('status', 'asc'))
       .get()
       .subscribe((querySnapshot) => {
@@ -58,6 +70,7 @@ export class DashboardComponent implements OnInit {
     }
     return bool;
   }
+
   addTask() {
     const duration =
       this.task.duration == 'custom'
@@ -68,6 +81,7 @@ export class DashboardComponent implements OnInit {
       description: this.task.description,
       duration: duration,
       status: 'todo',
+      timeRemaining: duration,
     };
     let id: string;
     this.af
@@ -98,10 +112,23 @@ export class DashboardComponent implements OnInit {
     const now = new Date();
     const formatData = {
       ...data,
-      startDate: data.startDate ? data.startDate : now,
+      startDate: now,
       status: 'ainprogress',
     };
     this.updateDoc(formatData);
+    this.countDown(data);
+  }
+  countDown(data: any) {
+    const now = new Date();
+    let formatData;
+    setTimeout(() => {
+      formatData = {
+        ...data,
+        endDate: now,
+        status: 'finalized',
+      };
+      this.updateDoc(formatData);
+    }, data.timeRemaining * 60000);
   }
   rebootTask(data: any) {
     const now = new Date();
@@ -113,21 +140,36 @@ export class DashboardComponent implements OnInit {
     this.updateDoc(formatData);
   }
   pauseTask(data: any) {
-    let weekMiliseconds = 1000 * 60 * 60 * 24 * 7 + new Date().getTime();
-    let t = data.startDate.seconds * 1000;
-    weekMiliseconds = getMinutes(weekMiliseconds - t);
+    let week = new Date();
+    let t: any = new Date(data.startDate.seconds * 1000);
+    t = differenceInMilliseconds(week, t);
+    t = Math.trunc(t / 60000);
+    t = data.duration - t;
     const formatData = {
       ...data,
-      startDate: weekMiliseconds,
+      startDate: new Date(),
       status: 'paused',
-      timeRemaining: weekMiliseconds,
+      timeRemaining: t,
     };
     this.updateDoc(formatData);
+  }
+  saveStatus(data: any) {
+    let week = new Date();
+    let t: any = new Date(data.startDate.seconds * 1000);
+    t = differenceInMilliseconds(week, t);
+    t = Math.trunc(t / 60000);
+    t = data.duration - t;
+    const formatData = {
+      ...data,
+      startDate: new Date(),
+      status: 'paused',
+      timeRemaining: t,
+    };
+    this.updateDocStatus(formatData);
   }
   stopTask(data: any) {
     const formatData = {
       ...data,
-      startDate: 0,
       status: 'todo',
       timeRemaining: data.duration,
     };
@@ -211,6 +253,18 @@ export class DashboardComponent implements OnInit {
       .update(params)
       .then((docRef) => {
         window.alert('Tarea modificada exitosamente');
+        this.getTasks();
+      })
+      .catch((error) => {
+        console.error('Error adding document: ', error);
+      });
+  }
+  async updateDocStatus(params: any) {
+    await this.af
+      .collection('tasks')
+      .doc(params.uid)
+      .update(params)
+      .then((docRef) => {
         this.getTasks();
       })
       .catch((error) => {
