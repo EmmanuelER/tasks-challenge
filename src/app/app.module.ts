@@ -14,6 +14,8 @@ import { SignUpComponent } from './pages/sign-up/sign-up.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 import { VerifyEmailComponent } from './pages/verify-email/verify-email.component';
 import { AuthService } from './shared/services/auth.service';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { AuthService } from './shared/services/auth.service';
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule, // firestore
-    AngularFireAuthModule, // auth
+    AngularFireAuthModule,
+    NgbModule, // auth
+    FormsModule,
   ],
   providers: [AuthService],
   bootstrap: [AppComponent],

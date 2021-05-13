@@ -1,1 +1,331 @@
-<p>dashboard works!</p>
+<div class="content">
+  <div class="head-title">
+    <div class="title">
+      <h2>Listado de tareas</h2>
+    </div>
+    <div>
+      <button
+        class="btn btn-outline-primary"
+        (click)="openEditModal(content, null)"
+      >
+        Nueva tarea
+      </button>
+    </div>
+  </div>
+
+  <div class="table-content table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          <th scope="col" (click)="sortTable('title')">Tarea</th>
+          <th scope="col" (click)="sortTable('duration')">Duración</th>
+          <th scope="col" (click)="sortTable('status')">Status</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let listTasks of listTasks">
+          <td class="d-flex justify-content-center">
+            <div
+              *ngIf="listTasks.status != 'ainprogress'"
+              class="text-success mx-2"
+              role="button"
+              (click)="playTask(listTasks)"
+            >
+              <i class="bi bi-play-circle" style="font-size: 1.3rem"></i>
+            </div>
+            <div
+              *ngIf="listTasks.status == 'ainprogress'"
+              class="text-info mx-2"
+              role="button"
+              (click)="openEditModal(edit, listTasks)"
+            >
+              <i class="bi bi-pause-circle" style="font-size: 1.3rem"></i>
+            </div>
+            <div
+              *ngIf="listTasks.status == 'ainprogress'"
+              class="text-warning mx-2"
+              role="button"
+              (click)="openEditModal(edit, listTasks)"
+            >
+              <i class="bi bi-stop-circle" style="font-size: 1.3rem"></i>
+            </div>
+            <div
+              *ngIf="listTasks.status == 'ainprogress'"
+              class="text-black-50 mx-2"
+              role="button"
+              (click)="openEditModal(edit, listTasks)"
+            >
+              <i class="bi bi-bootstrap-reboot" style="font-size: 1.3rem"></i>
+            </div>
+          </td>
+          <th>
+            {{ listTasks.title }}
+            <p class="text-sm text-secondary mb-0" style="font-weight: 400">
+              {{ listTasks.description }}
+            </p>
+          </th>
+          <td>{{ listTasks.duration }} mins.</td>
+          <td>
+            <div
+              class="btn-outline-warning btn btn-sm"
+              *ngIf="listTasks.status == 'todo'"
+            >
+              Pendiente
+            </div>
+            <div
+              class="btn-outline-primary btn btn-sm"
+              *ngIf="listTasks.status == 'ainprogress'"
+            >
+              En progreso
+            </div>
+            <div
+              class="btn-outline-info btn btn-sm"
+              *ngIf="listTasks.status == 'paused'"
+            >
+              Pausada
+            </div>
+            <div
+              class="btn-outline-success btn btn-sm"
+              *ngIf="listTasks.status == 'finalized'"
+            >
+              Finalizada
+            </div>
+          </td>
+          <td class="d-flex">
+            <div
+              class="text-info mx-2"
+              role="button"
+              (click)="openEditModal(edit, listTasks)"
+            >
+              <i class="bi bi-pencil-square" style="font-size: 1.3rem"></i>
+            </div>
+
+            <div
+              class="text-danger mx-2"
+              role="button"
+              (click)="openEditModal(delete, listTasks)"
+            >
+              <i class="bi bi-trash" style="font-size: 1.3rem"></i>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Crear tarea</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="title">Título</label>
+        <div class="input-group">
+          <input
+            id="title"
+            class="form-control"
+            placeholder="Introduce un título"
+            name="title"
+            type="text"
+            [(ngModel)]="task.title"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="description">Descripción</label>
+        <div class="input-group">
+          <input
+            id="description"
+            class="form-control"
+            placeholder="Introduce una descripción"
+            name="description"
+            type="text"
+            [(ngModel)]="task.description"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="duration">Duración</label>
+        <div class="input-group">
+          <select
+            id="duration"
+            class="form-control"
+            name="duration"
+            type="text"
+            [(ngModel)]="task.duration"
+            [ngModelOptions]="{ standalone: true }"
+          >
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="30">Tarea corta (30 minutos)</option>
+            <option value="45">Tarea media (45 minutos)</option>
+            <option value="60">Tarea larga (1 hora)</option>
+            <option value="custom">Duración personalizada</option>
+          </select>
+        </div>
+        <div *ngIf="task.duration == 'custom'">
+          <label class="mt-1 text-secondary" for="minutes"
+            >Introduce la duración en minutos</label
+          >
+          <div class="input-group">
+            <input
+              id="minutes"
+              class="form-control"
+              placeholder="Máximo 120 minutos"
+              name="minutes"
+              type="number"
+              max="120"
+              [(ngModel)]="task.minutes"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      [disabled]="!activateButton()"
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="addTask(); modal.close('Save click')"
+    >
+      Guardar tarea
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #edit let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Editar tarea</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h5>{{ editTask.title }}</h5>
+    <form>
+      <div class="form-group">
+        <label for="description">Descripción</label>
+        <div class="input-group">
+          <input
+            id="description"
+            class="form-control"
+            placeholder="Introduce una descripción"
+            name="description"
+            type="text"
+            [(ngModel)]="editTask.description"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="duration">Duración</label>
+        <div class="input-group">
+          <select
+            id="duration"
+            class="form-control"
+            name="duration"
+            type="text"
+            [(ngModel)]="editTask.duration"
+            [ngModelOptions]="{ standalone: true }"
+          >
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="30">Tarea corta (30 minutos)</option>
+            <option value="45">Tarea media (45 minutos)</option>
+            <option value="60">Tarea larga (1 hora)</option>
+            <option value="custom">Duración personalizada</option>
+          </select>
+        </div>
+        <div *ngIf="editTask.duration == 'custom'">
+          <label class="mt-1 text-secondary" for="minutes"
+            >Introduce la duración en minutos</label
+          >
+          <div class="input-group">
+            <input
+              id="minutes"
+              class="form-control"
+              placeholder="Máximo 120 minutos"
+              name="minutes"
+              type="number"
+              max="120"
+              [(ngModel)]="editTask.minutes"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="updateTask(); modal.close('Save click')"
+    >
+      Guardar cambios
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #delete let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Borrar tareas</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close button"
+      aria-describedby="modal-title"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>
+      <strong
+        >¿Eliminar la tarea
+        <span class="text-primary">"{{ editTask.title }}"</span> ?</strong
+      >
+    </p>
+    <p>
+      Toda la información y el avance serán eliminados.
+      <span class="text-danger">Esta operación no se puede revertir</span>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="modal.dismiss('cancel click')"
+    >
+      Cancelar operación
+    </button>
+    <button
+      type="button"
+      ngbAutofocus
+      class="btn btn-danger"
+      (click)="deleteTask(); modal.close('Save click')"
+    >
+      Confirmar eliminación
+    </button>
+  </div>
+</ng-template>

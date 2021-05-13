@@ -1,0 +1,64 @@
+.content {
+  width: 90%;
+  max-width: 1220px;
+  margin: 1rem auto;
+  .head-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .title {
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  }
+  .table-content {
+    width: 100%;
+    margin: 2rem auto;
+    th,
+    tr,
+    td {
+      vertical-align: middle !important;
+    }
+  }
+  .in-progress {
+    background: rgb(54, 176, 209);
+    font-weight: bold;
+    color: rgb(5, 55, 69);
+    border-radius: 0.5rem;
+    max-width: 90px;
+    text-align: center;
+  }
+  .pending {
+    background: rgb(203, 211, 62);
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    border-radius: 0.5rem;
+    max-width: 80px;
+    text-align: center;
+  }
+  .paused {
+    background: rgb(211, 159, 62);
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    border-radius: 0.5rem;
+    max-width: 80px;
+    text-align: center;
+  }
+  .paused {
+    background: rgb(211, 159, 62);
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    border-radius: 0.5rem;
+    max-width: 80px;
+    text-align: center;
+  }
+  .finalized {
+    background: rgb(37, 208, 105);
+    font-weight: bold;
+    color: rgb(26, 52, 32);
+    border-radius: 0.5rem;
+    max-width: 80px;
+    text-align: center;
+  }
+}
