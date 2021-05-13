@@ -4,7 +4,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { differenceInMilliseconds } from 'date-fns';
 import { HostListener } from '@angular/core';
-import { element } from 'protractor';
+import swal from 'sweetalert2';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -193,7 +193,11 @@ export class DashboardComponent implements OnInit {
       .doc(this.editTask.uid)
       .delete()
       .then(() => {
-        window.alert('Tarea eliminada exitosamente');
+        swal.fire(
+          'Tarea Eliminada',
+          'Los datos fueron eliminados exitosamente.',
+          'success'
+        );
         this.getTasks();
       })
       .catch((error) => {
@@ -254,7 +258,11 @@ export class DashboardComponent implements OnInit {
       .doc(params.uid)
       .update(params)
       .then((docRef) => {
-        window.alert('Tarea modificada exitosamente');
+        swal.fire(
+          'Datos modificados',
+          'Tarea modificada exitosamente',
+          'success'
+        );
         this.getTasks();
       })
       .catch((error) => {

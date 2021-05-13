@@ -6,7 +6,7 @@ import {
 } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { User } from './user';
-
+import swal from 'sweetalert2';
 @Injectable({
   providedIn: 'root',
 })
@@ -40,7 +40,7 @@ export class AuthService {
         this.SetUserData(result.user);
       })
       .catch((error) => {
-        window.alert(error.message);
+        swal.fire('Error', 'Usuario o contraseña incorrecto.', 'warning');
       })
       .then(() => {
         this.router.navigate(['dashboard']);
@@ -52,10 +52,14 @@ export class AuthService {
     return await this.afAuth
       .sendPasswordResetEmail(passwordResetEmail)
       .then(() => {
-        window.alert('Password reset email sent, check your inbox.');
+        swal.fire(
+          'Te hemos enviado un correo',
+          'REvisa tu bandeja de entrada y sigue las instrucciones para recuperar tu cuenta.',
+          'success'
+        );
       })
       .catch((error) => {
-        window.alert(error);
+        swal.fire('Error', 'El correo no se encuentra registrado.', 'warning');
       });
   }
   SetUserData(user: any) {

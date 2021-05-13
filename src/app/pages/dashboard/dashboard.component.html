@@ -4,8 +4,11 @@
       <h2>Listado de tareas</h2>
     </div>
     <div>
+      <a [routerLink]="['/dashboard/history']">
+        <button class="btn btn-outline-info mx-2">Ver historial</button>
+      </a>
       <button
-        class="btn btn-outline-primary"
+        class="btn btn-outline-primary mx-2"
         (click)="openEditModal(content, null)"
       >
         Nueva tarea
