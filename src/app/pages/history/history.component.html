@@ -1,0 +1,90 @@
+<div class="content">
+  <div class="head-title">
+    <div class="title">
+      <h2>Tareas completadas</h2>
+    </div>
+    <div>
+      <a [routerLink]="['/dashboard']">
+        <button class="btn btn-outline-info mx-2">
+          Ver tareas en progreso
+        </button>
+      </a>
+    </div>
+  </div>
+
+  <div class="table-content table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th scope="col" (click)="sortTable('title')">Tarea</th>
+          <th scope="col" (click)="sortTable('duration')">Duración</th>
+          <th scope="col" (click)="sortTable('status')">Status</th>
+          <th scope="col" (click)="sortTable('status')">Tiempo completado</th>
+          <th scope="col" (click)="sortTable('status')">
+            Fecha de finalización
+          </th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let listTasks of listTasks">
+          <th>
+            {{ listTasks.title }}
+            <p class="text-sm text-secondary mb-0" style="font-weight: 400">
+              {{ listTasks.description }}
+            </p>
+          </th>
+          <td>{{ listTasks.duration }} mins.</td>
+          <td>
+            <div
+              class="btn-outline-success btn btn-sm"
+              *ngIf="listTasks.status == 'finalized'"
+            >
+              Finalizada
+            </div>
+          </td>
+          <td>{{ listTasks.timeRemaining }} mins.</td>
+          <td>{{ formatDate(listTasks.endDate) }}</td>
+          <td>
+            <div class="d-flex">
+              <div
+                class="text-info mx-2"
+                role="button"
+                (click)="openEditModal(edit, listTasks)"
+                ngbPopover="Editar tarea"
+                triggers="mouseenter:mouseleave"
+              >
+                <i class="bi bi-pencil-square" style="font-size: 1.3rem"></i>
+              </div>
+
+              <div
+                class="text-danger mx-2"
+                role="button"
+                (click)="openEditModal(delete, listTasks)"
+                ngbPopover="Eliminar tarea"
+                triggers="mouseenter:mouseleave"
+              >
+                <i class="bi bi-trash" style="font-size: 1.3rem"></i>
+              </div>
+
+              <div
+                class="mx-2 text-success"
+                style="max-width: 100px"
+                role="button"
+                (click)="finalizeTask(listTasks)"
+                ngbPopover="Finalizar tarea"
+                triggers="mouseenter:mouseleave"
+                *ngIf="listTasks.status == 'ainprogress'"
+              >
+                <i
+                  class="bi bi-calendar-check mx-1"
+                  style="font-size: 1.3rem"
+                ></i>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
