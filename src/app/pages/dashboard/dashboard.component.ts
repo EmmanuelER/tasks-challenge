@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { getMinutes } from 'date-fns';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -60,8 +61,8 @@ export class DashboardComponent implements OnInit {
   addTask() {
     const duration =
       this.task.duration == 'custom'
-        ? parseInt(this.editTask.minutes)
-        : this.task.duration;
+        ? parseInt(this.task.minutes)
+        : parseInt(this.task.duration);
     const formatData = {
       title: this.task.title,
       description: this.task.description,
@@ -76,14 +77,7 @@ export class DashboardComponent implements OnInit {
       })
       .then((docRef) => {
         id = docRef.id;
-        this.af
-          .collection('tasks')
-          .doc(docRef.id)
-          .update({ ...formatData, uid: id })
-          .then(() => {
-            window.alert('Tarea creada exitosamente');
-            this.listTasks.push({ ...formatData, uid: id });
-          });
+        this.updateDoc({ ...formatData, uid: id });
       })
       .catch((error) => {
         console.error('Error adding document: ', error);
@@ -93,27 +87,62 @@ export class DashboardComponent implements OnInit {
     const duration =
       this.editTask.duration == 'custom'
         ? parseInt(this.editTask.minutes)
-        : this.editTask.duration;
+        : parseInt(this.editTask.duration);
     let formatData = {
       ...this.editTask,
       duration: duration,
     };
-    this.af
-      .collection('tasks')
-      .doc(this.editTask.uid)
-      .update(formatData)
-      .then((docRef) => {
-        window.alert('Tarea modificada exitosamente');
-        this.getTasks();
-      })
-      .catch((error) => {
-        console.error('Error adding document: ', error);
-      });
+    this.updateDoc(formatData);
   }
   playTask(data: any) {
     const now = new Date();
-    console.log(now);
+    const formatData = {
+      ...data,
+      startDate: data.startDate ? data.startDate : now,
+      status: 'ainprogress',
+    };
+    this.updateDoc(formatData);
   }
+  rebootTask(data: any) {
+    const now = new Date();
+    const formatData = {
+      ...data,
+      startDate: now,
+      status: 'ainprogress',
+    };
+    this.updateDoc(formatData);
+  }
+  pauseTask(data: any) {
+    let weekMiliseconds = 1000 * 60 * 60 * 24 * 7 + new Date().getTime();
+    let t = data.startDate.seconds * 1000;
+    weekMiliseconds = getMinutes(weekMiliseconds - t);
+    const formatData = {
+      ...data,
+      startDate: weekMiliseconds,
+      status: 'paused',
+      timeRemaining: weekMiliseconds,
+    };
+    this.updateDoc(formatData);
+  }
+  stopTask(data: any) {
+    const formatData = {
+      ...data,
+      startDate: 0,
+      status: 'todo',
+      timeRemaining: data.duration,
+    };
+    this.updateDoc(formatData);
+  }
+  finalizeTask(data: any) {
+    const now = new Date();
+    const formatData = {
+      ...data,
+      status: 'finalized',
+      endDate: now,
+    };
+    this.updateDoc(formatData);
+  }
+
   deleteTask() {
     this.af
       .collection('tasks')
@@ -174,6 +203,19 @@ export class DashboardComponent implements OnInit {
         return 0;
       });
     }
+  }
+  async updateDoc(params: any) {
+    await this.af
+      .collection('tasks')
+      .doc(params.uid)
+      .update(params)
+      .then((docRef) => {
+        window.alert('Tarea modificada exitosamente');
+        this.getTasks();
+      })
+      .catch((error) => {
+        console.error('Error adding document: ', error);
+      });
   }
 
   private getDismissReason(reason: any): string {

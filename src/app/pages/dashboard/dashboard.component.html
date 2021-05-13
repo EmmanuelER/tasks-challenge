@@ -21,17 +21,20 @@
           <th scope="col" (click)="sortTable('title')">Tarea</th>
           <th scope="col" (click)="sortTable('duration')">Duración</th>
           <th scope="col" (click)="sortTable('status')">Status</th>
+          <th scope="col" (click)="sortTable('status')">Restante</th>
           <th scope="col">Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let listTasks of listTasks">
-          <td class="d-flex justify-content-center">
+          <td class="d-flex justify-content-center align-items-center">
             <div
               *ngIf="listTasks.status != 'ainprogress'"
               class="text-success mx-2"
               role="button"
               (click)="playTask(listTasks)"
+              ngbPopover="Iniciar tarea"
+              triggers="mouseenter:mouseleave"
             >
               <i class="bi bi-play-circle" style="font-size: 1.3rem"></i>
             </div>
@@ -39,23 +42,35 @@
               *ngIf="listTasks.status == 'ainprogress'"
               class="text-info mx-2"
               role="button"
-              (click)="openEditModal(edit, listTasks)"
+              (click)="pauseTask(listTasks)"
+              ngbPopover="Pausar tarea"
+              triggers="mouseenter:mouseleave"
             >
               <i class="bi bi-pause-circle" style="font-size: 1.3rem"></i>
             </div>
             <div
-              *ngIf="listTasks.status == 'ainprogress'"
+              *ngIf="
+                listTasks.status == 'ainprogress' ||
+                listTasks.status == 'paused'
+              "
               class="text-warning mx-2"
               role="button"
-              (click)="openEditModal(edit, listTasks)"
+              (click)="stopTask(listTasks)"
+              ngbPopover="Detener tarea"
+              triggers="mouseenter:mouseleave"
             >
               <i class="bi bi-stop-circle" style="font-size: 1.3rem"></i>
             </div>
             <div
-              *ngIf="listTasks.status == 'ainprogress'"
+              *ngIf="
+                listTasks.status == 'ainprogress' ||
+                listTasks.status == 'paused'
+              "
               class="text-black-50 mx-2"
               role="button"
-              (click)="openEditModal(edit, listTasks)"
+              (click)="rebootTask(listTasks)"
+              ngbPopover="Reiniciar tarea"
+              triggers="mouseenter:mouseleave"
             >
               <i class="bi bi-bootstrap-reboot" style="font-size: 1.3rem"></i>
             </div>
@@ -93,21 +108,43 @@
               Finalizada
             </div>
           </td>
-          <td class="d-flex">
-            <div
-              class="text-info mx-2"
-              role="button"
-              (click)="openEditModal(edit, listTasks)"
-            >
-              <i class="bi bi-pencil-square" style="font-size: 1.3rem"></i>
-            </div>
+          <td>{{ listTasks.duration }} mins.</td>
+          <td>
+            <div class="d-flex">
+              <div
+                class="text-info mx-2"
+                role="button"
+                (click)="openEditModal(edit, listTasks)"
+                ngbPopover="Editar tarea"
+                triggers="mouseenter:mouseleave"
+              >
+                <i class="bi bi-pencil-square" style="font-size: 1.3rem"></i>
+              </div>
 
-            <div
-              class="text-danger mx-2"
-              role="button"
-              (click)="openEditModal(delete, listTasks)"
-            >
-              <i class="bi bi-trash" style="font-size: 1.3rem"></i>
+              <div
+                class="text-danger mx-2"
+                role="button"
+                (click)="openEditModal(delete, listTasks)"
+                ngbPopover="Eliminar tarea"
+                triggers="mouseenter:mouseleave"
+              >
+                <i class="bi bi-trash" style="font-size: 1.3rem"></i>
+              </div>
+
+              <div
+                class="mx-2 text-success"
+                style="max-width: 100px"
+                role="button"
+                (click)="finalizeTask(listTasks)"
+                ngbPopover="Finalizar tarea"
+                triggers="mouseenter:mouseleave"
+                *ngIf="listTasks.status == 'ainprogress'"
+              >
+                <i
+                  class="bi bi-calendar-check mx-1"
+                  style="font-size: 1.3rem"
+                ></i>
+              </div>
             </div>
           </td>
         </tr>

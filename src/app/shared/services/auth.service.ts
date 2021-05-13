@@ -59,7 +59,6 @@ export class AuthService {
       });
   }
   SetUserData(user: any) {
-    console.log(this.userData);
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(
       `users/${user.uid}`
     );
