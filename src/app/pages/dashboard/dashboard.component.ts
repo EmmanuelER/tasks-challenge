@@ -43,7 +43,9 @@ export class DashboardComponent implements OnInit {
   getTasks() {
     var listT: any = [];
     this.af
-      .collection('tasks', (ref) => ref.orderBy('status', 'asc'))
+      .collection('tasks', (ref) =>
+        ref.orderBy('status', 'asc').where('status', 'not-in', ['finalized'])
+      )
       .get()
       .subscribe((querySnapshot) => {
         querySnapshot.forEach((doc) => {

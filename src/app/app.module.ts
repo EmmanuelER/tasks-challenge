@@ -16,6 +16,7 @@ import { VerifyEmailComponent } from './pages/verify-email/verify-email.componen
 import { AuthService } from './shared/services/auth.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { HistoryComponent } from './pages/history/history.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { FormsModule } from '@angular/forms';
     SignUpComponent,
     ForgotPasswordComponent,
     VerifyEmailComponent,
+    HistoryComponent,
   ],
   imports: [
     BrowserModule,

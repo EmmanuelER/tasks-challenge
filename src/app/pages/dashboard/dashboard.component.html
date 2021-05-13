@@ -369,20 +369,3 @@
     </button>
   </div>
 </ng-template>
-<script>
-  window.onbeforeunload = function () {
-    return test();
-  };
-
-  function test() {
-    if (
-      confirm(
-        "would you like to run the last function before closing the window?"
-      )
-    ) {
-      imts_save_changes();
-
-      alert("record saved");
-    }
-  }
-</script>
